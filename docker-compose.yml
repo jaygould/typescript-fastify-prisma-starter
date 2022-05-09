@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  starter-api:
+    platform: linux/x86_64
+    command: sh -c "npm run dev"
+    build: ./
+    environment:
+      NODE_ENV: development
+    ports:
+      - 8080:8080
+      - 9240:9240 # Node inspect
+    volumes:
+      - ./:/home/app/api
+      - /home/app/api/node_modules
+    working_dir: /home/app/api
+    restart: on-failure
+    depends_on:
+      - starter-db
+  starter-db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_DB=starter
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - ./db/data/postgres:/var/lib/postgresql
+    ports:
+      - 5432:5432
