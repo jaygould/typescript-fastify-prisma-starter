@@ -38,8 +38,8 @@ async function routes(fastify: FastifyInstance) {
         return reply.send({
           message: "Success.",
         });
-      } catch (e) {
-        return reply.code(500).send(`Error.`);
+      } catch (e: any) {
+        return reply.code(400).send({ message: e?.message });
       }
     }
   );
@@ -72,8 +72,8 @@ async function routes(fastify: FastifyInstance) {
           message: "Success.",
           jwt: authToken,
         });
-      } catch (e) {
-        return reply.code(500).send(`Error.`);
+      } catch (e: any) {
+        return reply.code(400).send({ message: e?.message });
       }
     }
   );
