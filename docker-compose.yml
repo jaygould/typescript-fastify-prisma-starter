@@ -1,5 +1,18 @@
 version: "3.8"
 services:
+  starter-client:
+    build: ./client
+    command: sh -c "npm run dev"
+    container_name: pc-client-dev
+    ports:
+      - 3000:3000
+    volumes:
+      - ./client:/home/app/client
+      - /home/app/client/node_modules
+    working_dir: /home/app/client
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080/v1
+      NEXT_PUBLIC_NETWORK_API_URL: http://starter-api:8080/v1
   starter-api:
     platform: linux/x86_64
     command: sh -c "npm run dev"
