@@ -3,14 +3,14 @@ services:
   starter-api:
     platform: linux/x86_64
     command: sh -c "npm run dev"
-    build: ./
+    build: ./api
     environment:
       NODE_ENV: development
     ports:
       - 8080:8080
       - 9240:9240 # Node inspect
     volumes:
-      - ./:/home/app/api
+      - ./api:/home/app/api
       - /home/app/api/node_modules
     working_dir: /home/app/api
     restart: on-failure
@@ -25,6 +25,6 @@ services:
       - POSTGRES_HOST_AUTH_METHOD=trust
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
-      - ./db/data/postgres:/var/lib/postgresql
+      - ./api/db/data/postgres:/var/lib/postgresql
     ports:
       - 5432:5432
