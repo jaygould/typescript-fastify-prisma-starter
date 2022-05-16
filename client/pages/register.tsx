@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
 
+import Button, { ButtonTypeEnum } from "../components/Button";
 import GlobalMessage from "../components/GlobalMessage";
 
 interface IRegisterFields {
@@ -46,20 +46,23 @@ function RegisterPage() {
   return (
     <>
       <h2>Register</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="mb-8">
         <input
+          type="text"
           {...register("firstName", {
             required: true,
           })}
         />
 
         <input
+          type="text"
           {...register("lastName", {
             required: true,
           })}
         />
 
         <input
+          type="text"
           {...register("emailAddress", {
             required: true,
           })}
@@ -68,6 +71,7 @@ function RegisterPage() {
           "Email address is required"}
 
         <input
+          type="text"
           {...register("password", {
             required: true,
             minLength: {
@@ -78,12 +82,14 @@ function RegisterPage() {
         />
         {errors.password?.message}
 
-        <input type="submit" />
+        <Button
+          type={ButtonTypeEnum.submit}
+          text={"Register"}
+          color={"bg-blue-600"}
+        ></Button>
       </form>
 
-      <Link href={"/"}>
-        <a>Login</a>
-      </Link>
+      <Button text={"Login"} link={"/"} color={"bg-green-700"}></Button>
 
       <GlobalMessage
         message={message?.text}

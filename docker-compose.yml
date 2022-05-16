@@ -3,7 +3,7 @@ services:
   starter-client:
     build: ./client
     command: sh -c "npm run dev"
-    container_name: pc-client-dev
+    container_name: starter-client
     ports:
       - 3000:3000
     volumes:

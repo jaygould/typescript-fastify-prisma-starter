@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
 
+import Button, { ButtonTypeEnum } from "../components/Button";
 import GlobalMessage from "../components/GlobalMessage";
 
 interface ILoginFields {
@@ -40,25 +40,33 @@ function HomePage() {
   return (
     <>
       <h2>Login</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="mb-8">
         <input
+          type="text"
           {...register("emailAddress", {
             required: true,
           })}
         />
 
         <input
+          type="text"
           {...register("password", {
             required: true,
           })}
         />
 
-        <input type="submit" />
+        <Button
+          type={ButtonTypeEnum.submit}
+          text={"Login"}
+          color={"bg-blue-600"}
+        ></Button>
       </form>
 
-      <Link href={"/register"}>
-        <a>Register</a>
-      </Link>
+      <Button
+        text={"Register"}
+        link={"/register"}
+        color={"bg-green-700"}
+      ></Button>
 
       <GlobalMessage
         message={message?.text}
