@@ -49,6 +49,7 @@ function RegisterPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="mb-8">
         <input
           type="text"
+          placeholder="First name"
           {...register("firstName", {
             required: true,
           })}
@@ -56,6 +57,7 @@ function RegisterPage() {
 
         <input
           type="text"
+          placeholder="Last name"
           {...register("lastName", {
             required: true,
           })}
@@ -63,6 +65,7 @@ function RegisterPage() {
 
         <input
           type="text"
+          placeholder="Email address"
           {...register("emailAddress", {
             required: true,
           })}
@@ -71,7 +74,8 @@ function RegisterPage() {
           "Email address is required"}
 
         <input
-          type="text"
+          type="password"
+          placeholder="Password"
           {...register("password", {
             required: true,
             minLength: {

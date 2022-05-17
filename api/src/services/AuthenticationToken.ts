@@ -78,16 +78,19 @@ class AuthenticationToken {
   }
 
   async validateToken() {
-    return new Promise<void>((res, rej) => {
+    return new Promise<{ firstName: string; lastName: string }>((res, rej) => {
       if (!this.token) {
         throw new Error("No auth token.");
       }
 
-      jwt.verify(this.token, config.authSecret, (err: any) => {
+      jwt.verify(this.token, config.authSecret, (err: any, decoded: any) => {
         if (err) {
           rej();
         } else {
-          res();
+          res({
+            firstName: decoded.firstName,
+            lastName: decoded.lastName,
+          });
         }
       });
     });

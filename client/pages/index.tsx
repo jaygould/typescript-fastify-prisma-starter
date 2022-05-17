@@ -4,10 +4,17 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 import Button, { ButtonTypeEnum } from "../components/Button";
 import GlobalMessage from "../components/GlobalMessage";
+import { useRouter } from "next/router";
+import { useCookies } from "react-cookie";
 
 interface ILoginFields {
   emailAddress: string;
   password: string;
+}
+
+interface ILoginResponse {
+  message: string;
+  jwt: string;
 }
 
 function HomePage() {
@@ -19,18 +26,22 @@ function HomePage() {
     defaultValues: { emailAddress: "", password: "" },
   });
   const [message, setMessage] = useState(null);
+  const router = useRouter();
+  const [cookies, setCookie] = useCookies(["jwt"]);
 
   const onSubmit: SubmitHandler<ILoginFields> = ({
     emailAddress,
     password,
   }) => {
     axios
-      .post(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+      .post<ILoginResponse>(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
         email: emailAddress,
         password,
       })
       .then((response) => {
         setMessage({ type: "success", text: response?.data?.message });
+        setCookie("jwt", response.data.jwt, { path: "/" });
+        router.push("/dashboard");
       })
       .catch((error) => {
         setMessage({ type: "error", text: error?.response?.data?.message });
@@ -42,6 +53,7 @@ function HomePage() {
       <h2>Login</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="mb-8">
         <input
+          placeholder="Email address"
           type="text"
           {...register("emailAddress", {
             required: true,
@@ -49,7 +61,8 @@ function HomePage() {
         />
 
         <input
-          type="text"
+          placeholder="Password"
+          type="password"
           {...register("password", {
             required: true,
           })}

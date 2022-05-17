@@ -1,7 +1,8 @@
 import { Authentication } from "../services/Authentication";
+import { AuthenticationToken } from "../services/AuthenticationToken";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
-import { ILoginBody, IRegisterBody } from "../types/user.types";
+import { ILoginBody, IRegisterBody, IValidateBody } from "../types/user.types";
 
 type IRegisterRequest = FastifyRequest<{
   Body: IRegisterBody;
@@ -9,6 +10,10 @@ type IRegisterRequest = FastifyRequest<{
 
 type ILoginRequest = FastifyRequest<{
   Body: ILoginBody;
+}>;
+
+type IValidateRequest = FastifyRequest<{
+  Body: IValidateBody;
 }>;
 
 async function routes(fastify: FastifyInstance) {
@@ -71,6 +76,39 @@ async function routes(fastify: FastifyInstance) {
         return reply.send({
           message: "Success.",
           jwt: authToken,
+        });
+      } catch (e: any) {
+        return reply.code(400).send({ message: e?.message });
+      }
+    }
+  );
+
+  fastify.post(
+    "/validate",
+    {
+      schema: {
+        body: {
+          type: "object",
+          required: ["token"],
+          properties: {
+            token: { type: "string" },
+          },
+        },
+      },
+    },
+    async (request: IValidateRequest, reply: FastifyReply) => {
+      const { token } = request.body;
+
+      try {
+        const authToken = new AuthenticationToken(token);
+
+        // If token is invalid, error will be thrown to the catch
+        const decodedToken = await authToken.validateToken();
+
+        return reply.send({
+          ...(decodedToken?.firstName && decodedToken?.lastName
+            ? { ...decodedToken }
+            : null),
         });
       } catch (e: any) {
         return reply.code(400).send({ message: e?.message });

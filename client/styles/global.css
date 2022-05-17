@@ -25,7 +25,8 @@ body {
   p {
     @apply mb-2;
   }
-  input[type="text"] {
+  input[type="text"],
+  input[type="password"] {
     @apply border border-[#676767] block p-2.5 mb-2;
   }
 }

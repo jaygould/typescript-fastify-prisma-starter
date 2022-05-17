@@ -17,3 +17,6 @@ export interface IRegisterBody {
   email: string;
   password: string;
 }
+export interface IValidateBody {
+  token: string;
+}
