@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { GetServerSideProps } from "next";
 import Button, { ButtonTypeEnum } from "../components/Button";
 import { useCookies } from "react-cookie";
 import { useRouter } from "next/router";
+import withAuthentication from "../services/with-authentication";
 
 function Dashboard({ name }) {
   const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
@@ -26,38 +25,12 @@ function Dashboard({ name }) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const jwt = context?.req?.cookies?.jwt;
-  if (!jwt) {
-    return {
-      redirect: {
-        destination: "/?e=no-token",
-        permanent: false,
-      },
-    };
-  }
-
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_NETWORK_API_URL}/validate`,
-      {
-        token: jwt,
-      }
-    );
-
-    return {
-      props: {
-        name: `${response.data.firstName} ${response.data.lastName}`,
-      },
-    };
-  } catch (e) {
-    return {
-      redirect: {
-        destination: "/?e=invalid-token",
-        permanent: false,
-      },
-    };
-  }
-};
+export const getServerSideProps = withAuthentication(async (context, props) => {
+  return {
+    props: {
+      name: props.name,
+    },
+  };
+});
 
 export default Dashboard;
