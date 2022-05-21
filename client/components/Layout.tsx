@@ -1,6 +1,11 @@
 import Link from "next/link";
+import { FC, PropsWithChildren, ReactComponentElement } from "react";
 
-export default function Layout({ children }) {
+type Props = {
+  children: JSX.Element;
+};
+
+const Layout: FC<Props> = ({ children }) => {
   return (
     <div className="flex flex-col h-screen justify-between">
       <header className="bg-lime-800">
@@ -25,4 +30,6 @@ export default function Layout({ children }) {
       </footer>
     </div>
   );
-}
+};
+
+export default Layout;

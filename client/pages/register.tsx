@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import axios from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -12,7 +12,7 @@ interface IRegisterFields {
   password: string;
 }
 
-function RegisterPage() {
+const RegisterPage: FC = () => {
   const {
     register,
     handleSubmit,
@@ -102,6 +102,6 @@ function RegisterPage() {
       />
     </>
   );
-}
+};
 
 export default RegisterPage;

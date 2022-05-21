@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import axios from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -17,7 +17,7 @@ interface ILoginResponse {
   jwt: string;
 }
 
-function HomePage() {
+const HomePage: FC = () => {
   const {
     register,
     handleSubmit,
@@ -88,6 +88,6 @@ function HomePage() {
       />
     </>
   );
-}
+};
 
 export default HomePage;

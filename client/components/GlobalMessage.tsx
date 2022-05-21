@@ -1,7 +1,14 @@
+import { FC } from "react";
 import * as ReactDOM from "react-dom";
 import Button, { ButtonTypeEnum } from "./Button";
 
-export default function GlobalMessage({ message, onClose, isOpen }) {
+type Props = {
+  message: string;
+  onClose: () => void;
+  isOpen: boolean;
+};
+
+const GlobalMessage: FC<Props> = ({ message, onClose, isOpen }) => {
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
@@ -16,4 +23,6 @@ export default function GlobalMessage({ message, onClose, isOpen }) {
     </div>,
     document.body
   );
-}
+};
+
+export default GlobalMessage;

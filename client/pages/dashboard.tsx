@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import Button, { ButtonTypeEnum } from "../components/Button";
 import { useCookies } from "react-cookie";
 import { useRouter } from "next/router";
 import withAuthentication from "../services/with-authentication";
 
-function Dashboard({ name }) {
+type Props = {
+  name: string;
+};
+
+const Dashboard: FC<Props> = ({ name }) => {
   const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
   const router = useRouter();
 
@@ -23,7 +27,7 @@ function Dashboard({ name }) {
       />
     </>
   );
-}
+};
 
 export const getServerSideProps = withAuthentication(async (context, props) => {
   return {
