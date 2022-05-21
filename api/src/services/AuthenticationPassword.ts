@@ -6,8 +6,8 @@ import * as _ from "lodash";
  * specific user actions
  */
 class AuthenticationPassword {
-  public password;
-  public hashedPassword;
+  public password: string;
+  public hashedPassword: string;
 
   constructor(password, hashedPassword) {
     this.password = password;

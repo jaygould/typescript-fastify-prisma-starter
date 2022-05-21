@@ -2,18 +2,19 @@ import { Authentication } from "../services/Authentication";
 import { AuthenticationToken } from "../services/AuthenticationToken";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
-import { ILoginBody, IRegisterBody, IValidateBody } from "../types/user.types";
+import { IUserLogin, IUserName, IUserTokens } from "../ts-types/user.types";
+import { getErrors } from "../ts-helpers/errors";
 
 type IRegisterRequest = FastifyRequest<{
-  Body: IRegisterBody;
+  Body: IUserLogin & IUserName;
 }>;
 
 type ILoginRequest = FastifyRequest<{
-  Body: ILoginBody;
+  Body: IUserLogin;
 }>;
 
 type IValidateRequest = FastifyRequest<{
-  Body: IValidateBody;
+  Body: IUserTokens;
 }>;
 
 async function routes(fastify: FastifyInstance) {
@@ -43,8 +44,9 @@ async function routes(fastify: FastifyInstance) {
         return reply.send({
           message: "Success.",
         });
-      } catch (e: any) {
-        return reply.code(400).send({ message: e?.message });
+      } catch (e: unknown) {
+        const error = getErrors(e);
+        return reply.code(400).send({ message: error });
       }
     }
   );
@@ -68,17 +70,18 @@ async function routes(fastify: FastifyInstance) {
 
       try {
         const auth = new Authentication();
-        const { authToken } = await auth.loginUser({
+        const { token } = await auth.loginUser({
           email,
           password,
         });
 
         return reply.send({
           message: "Success.",
-          jwt: authToken,
+          jwt: token,
         });
-      } catch (e: any) {
-        return reply.code(400).send({ message: e?.message });
+      } catch (e: unknown) {
+        const error = getErrors(e);
+        return reply.code(400).send({ message: error });
       }
     }
   );
@@ -97,21 +100,22 @@ async function routes(fastify: FastifyInstance) {
       },
     },
     async (request: IValidateRequest, reply: FastifyReply) => {
-      const { token } = request.body;
+      const { token: authToken } = request.body;
 
       try {
-        const authToken = new AuthenticationToken(token);
+        const token = new AuthenticationToken(authToken);
 
         // If token is invalid, error will be thrown to the catch
-        const decodedToken = await authToken.validateToken();
+        const decodedToken = await token.validateToken();
 
         return reply.send({
           ...(decodedToken?.firstName && decodedToken?.lastName
             ? { ...decodedToken }
             : null),
         });
-      } catch (e: any) {
-        return reply.code(400).send({ message: e?.message });
+      } catch (e: unknown) {
+        const error = getErrors(e);
+        return reply.code(400).send({ message: error });
       }
     }
   );

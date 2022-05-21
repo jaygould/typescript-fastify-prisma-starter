@@ -1,6 +1,11 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 
-import { ILoginBody, IUser } from "../types/user.types";
+import {
+  IUser,
+  IUserLogin,
+  IUserName,
+  LoginActivity,
+} from "../ts-types/user.types";
 
 import { AuthenticationToken } from "./AuthenticationToken";
 import { AuthenticationPassword } from "./AuthenticationPassword";
@@ -10,14 +15,19 @@ import { AuthenticationPassword } from "./AuthenticationPassword";
  * specific user actions
  */
 class Authentication {
-  db: any;
+  public db;
 
   constructor() {
     const prisma = new PrismaClient();
     this.db = prisma;
   }
 
-  async createUser({ firstName, lastName, email, password }: Partial<IUser>) {
+  async createUser({
+    firstName,
+    lastName,
+    email,
+    password,
+  }: IUserName & IUserLogin): Promise<IUser> {
     if (!email || !firstName || !lastName || !password) {
       throw new Error("You must send all register details.");
     }
@@ -45,7 +55,7 @@ class Authentication {
     return newUser;
   }
 
-  async loginUser({ email, password }: ILoginBody) {
+  async loginUser({ email, password }: IUserLogin) {
     if (!email || !password) {
       throw new Error("You must send all login details.");
     }
@@ -72,7 +82,7 @@ class Authentication {
 
     return {
       id: userExists.id,
-      authToken: token.token,
+      token: token.token,
       refreshToken: token.refreshToken,
       firstName: userExists.firstName,
       lastName: userExists.lastName,
@@ -80,13 +90,13 @@ class Authentication {
     };
   }
 
-  logUserActivity(userId: number, activity: string) {
+  logUserActivity(userId: number, activity: LoginActivity) {
     return this.db.loginActivity.create({
       data: { userId, activityType: activity },
     });
   }
 
-  doesUserExist(email: string) {
+  doesUserExist(email: string): Promise<IUser> {
     const userEmailWhere: Prisma.UserWhereInput = {
       email: email,
     };
@@ -102,7 +112,7 @@ class Authentication {
     return re.test(String(email).toLowerCase());
   }
 
-  saveUser(first_name, last_name, email, passwordHash) {
+  saveUser(first_name, last_name, email, passwordHash): Promise<IUser> {
     return this.db.user.create({
       data: {
         firstName: first_name,

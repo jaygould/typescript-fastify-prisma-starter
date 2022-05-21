@@ -3,7 +3,7 @@ import * as jwt from "jsonwebtoken";
 import * as _ from "lodash";
 
 import config from "../config";
-import { IUser } from "../types/user.types";
+import { IUser, IUserName } from "../ts-types/user.types";
 
 class AuthenticationToken {
   public db: any;
@@ -78,7 +78,7 @@ class AuthenticationToken {
   }
 
   async validateToken() {
-    return new Promise<{ firstName: string; lastName: string }>((res, rej) => {
+    return new Promise<IUserName>((res, rej) => {
       if (!this.token) {
         throw new Error("No auth token.");
       }
