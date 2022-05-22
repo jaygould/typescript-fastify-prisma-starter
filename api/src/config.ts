@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 export default {
-  authSecret: "dsfUPOGFQ£faef3",
+  authSecret: process.env.JWT_SECRET,
 };

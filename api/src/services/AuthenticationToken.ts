@@ -6,7 +6,7 @@ import config from "../config";
 import { IUser, IUserName } from "../ts-types/user.types";
 
 class AuthenticationToken {
-  public db: any;
+  public db: PrismaClient;
   public token: string | undefined;
   public refreshToken: string | undefined;
 
@@ -23,15 +23,23 @@ class AuthenticationToken {
   }
 
   createToken(user: IUser) {
-    this.token = jwt.sign(_.omit(user, "password"), config.authSecret, {
-      expiresIn: "90d",
-    });
+    this.token = jwt.sign(
+      _.omit(user, "password"),
+      config.authSecret as string,
+      {
+        expiresIn: "90d",
+      }
+    );
   }
 
   async createRefreshToken(userEmail: string) {
-    this.refreshToken = jwt.sign({ type: "refresh" }, config.authSecret, {
-      expiresIn: "90d", // 1 hour
-    });
+    this.refreshToken = jwt.sign(
+      { type: "refresh" },
+      config.authSecret as string,
+      {
+        expiresIn: "90d", // 1 hour
+      }
+    );
 
     await this.saveRefreshToken(userEmail);
 
@@ -55,25 +63,29 @@ class AuthenticationToken {
     }
 
     return new Promise((res, rej) => {
-      jwt.verify(refreshToken, config.authSecret, async (err: any) => {
-        if (err) {
-          rej({
-            code: "refreshExpired",
-            message: "Refresh token expired - session ended.",
-          });
-        } else {
-          try {
-            const user = await this.db.users.findUnique({
-              where: {
-                refreshToken,
-              },
+      jwt.verify(
+        refreshToken,
+        config.authSecret as string,
+        async (err: any) => {
+          if (err) {
+            rej({
+              code: "refreshExpired",
+              message: "Refresh token expired - session ended.",
             });
-            res(user);
-          } catch (e) {
-            rej(e);
+          } else {
+            try {
+              const user = await this.db.user.findMany({
+                where: {
+                  refreshToken,
+                },
+              });
+              res(user);
+            } catch (e) {
+              rej(e);
+            }
           }
         }
-      });
+      );
     });
   }
 
@@ -83,16 +95,20 @@ class AuthenticationToken {
         throw new Error("No auth token.");
       }
 
-      jwt.verify(this.token, config.authSecret, (err: any, decoded: any) => {
-        if (err) {
-          rej();
-        } else {
-          res({
-            firstName: decoded.firstName,
-            lastName: decoded.lastName,
-          });
+      jwt.verify(
+        this.token,
+        config.authSecret as string,
+        (err: any, decoded: any) => {
+          if (err) {
+            rej();
+          } else {
+            res({
+              firstName: decoded.firstName,
+              lastName: decoded.lastName,
+            });
+          }
         }
-      });
+      );
     });
   }
 }

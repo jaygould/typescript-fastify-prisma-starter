@@ -20,9 +20,13 @@ export default function withAuthentication(getServerSideProps) {
         }
       );
 
-      return getServerSideProps(context, {
-        name: `${response.data.firstName} ${response.data.lastName}`,
-      });
+      return getServerSideProps(
+        context,
+        {
+          name: `${response.data.firstName} ${response.data.lastName}`,
+        },
+        jwt
+      );
     } catch (e) {
       return {
         redirect: {

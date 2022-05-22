@@ -10,10 +10,6 @@ import {
 import { AuthenticationToken } from "./AuthenticationToken";
 import { AuthenticationPassword } from "./AuthenticationPassword";
 
-/**
- * Class to abstract the higher level authentication logic away from
- * specific user actions
- */
 class Authentication {
   public db;
 
