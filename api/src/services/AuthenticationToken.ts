@@ -90,7 +90,7 @@ class AuthenticationToken {
   }
 
   async validateToken() {
-    return new Promise<IUserName>((res, rej) => {
+    return new Promise<IUserName | IUser>((res, rej) => {
       if (!this.token) {
         throw new Error("No auth token.");
       }
@@ -103,6 +103,7 @@ class AuthenticationToken {
             rej();
           } else {
             res({
+              id: decoded.id,
               firstName: decoded.firstName,
               lastName: decoded.lastName,
             });

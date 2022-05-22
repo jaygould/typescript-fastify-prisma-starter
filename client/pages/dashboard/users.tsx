@@ -1,33 +1,45 @@
 import React, { FC } from "react";
 import withAuthentication from "../../services/with-authentication";
 import axios from "axios";
+import UserList from "../../components/UserList";
 
 // TODO: share types from server
 interface IUser {
   email: string;
 }
 
+interface ICurrentUser extends IUser {
+  isThisUser: boolean;
+}
+
 type Props = {
   users: IUser[];
+  thisUser: ICurrentUser[];
 };
 
-const Users: FC<Props> = ({ users }) => {
+const Users: FC<Props> = ({ thisUser, users }) => {
   return (
     <>
       <h2>Dashboard</h2>
+      <div className="mb-10">
+        <p>Users:</p>
+        <UserList
+          users={users}
+          render={(user: IUser) => {
+            return <div>{user.email}</div>;
+          }}
+        ></UserList>
+      </div>
 
-      <p>Users:</p>
-      {users?.length ? (
-        users.map((user) => {
-          return (
-            <div>
-              <p>{user.email}</p>
-            </div>
-          );
-        })
-      ) : (
-        <p>There are no registered users.</p>
-      )}
+      <div className="mb-10">
+        <p>Current user:</p>
+        <UserList
+          users={thisUser}
+          render={(user: ICurrentUser) => {
+            return <div>{user.email}</div>;
+          }}
+        ></UserList>
+      </div>
     </>
   );
 };
@@ -46,6 +58,14 @@ export const getServerSideProps = withAuthentication(
 
       return {
         props: {
+          thisUser: response.data.users
+            .filter((user) => user.id === props.id)
+            .map((user) => {
+              return {
+                ...user,
+                isThisUser: true,
+              };
+            }),
           users: response.data.users,
         },
       };

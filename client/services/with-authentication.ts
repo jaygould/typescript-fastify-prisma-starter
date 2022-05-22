@@ -23,6 +23,7 @@ export default function withAuthentication(getServerSideProps) {
       return getServerSideProps(
         context,
         {
+          id: response.data.id,
           name: `${response.data.firstName} ${response.data.lastName}`,
         },
         jwt
