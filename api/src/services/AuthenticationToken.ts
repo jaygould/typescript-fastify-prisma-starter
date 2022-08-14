@@ -1,9 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import * as jwt from "jsonwebtoken";
 import * as _ from "lodash";
 
 import config from "../config";
-import { IUser, IUserName } from "../ts-types/user.types";
+import { TTokenValues } from "../ts-types/";
 
 class AuthenticationToken {
   public db: PrismaClient;
@@ -22,7 +22,7 @@ class AuthenticationToken {
     }
   }
 
-  createToken(user: IUser) {
+  createToken(user: User) {
     this.token = jwt.sign(
       _.omit(user, "password"),
       config.authSecret as string,
@@ -90,7 +90,7 @@ class AuthenticationToken {
   }
 
   async validateToken() {
-    return new Promise<IUserName | IUser>((res, rej) => {
+    return new Promise<TTokenValues>((res, rej) => {
       if (!this.token) {
         throw new Error("No auth token.");
       }

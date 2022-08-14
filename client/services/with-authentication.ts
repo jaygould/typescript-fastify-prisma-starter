@@ -1,6 +1,15 @@
 import axios from "axios";
+import { GetServerSidePropsContext } from "next";
 
-export default function withAuthentication(getServerSideProps) {
+type IGetServerSideProps = (
+  context: GetServerSidePropsContext,
+  props: { id: string; name: string },
+  jwt: string
+) => void;
+
+export default function withAuthentication(
+  getServerSideProps: IGetServerSideProps
+) {
   return async (context) => {
     const jwt = context?.req?.cookies?.jwt;
     if (!jwt) {

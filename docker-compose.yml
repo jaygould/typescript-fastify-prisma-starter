@@ -14,7 +14,6 @@ services:
       NEXT_PUBLIC_API_URL: http://localhost:8080/v1
       NEXT_PUBLIC_NETWORK_API_URL: http://starter-api:8080/v1
   starter-api:
-    platform: linux/x86_64
     command: sh -c "npm run dev"
     build: ./api
     environment:

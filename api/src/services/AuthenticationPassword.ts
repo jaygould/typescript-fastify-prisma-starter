@@ -7,19 +7,24 @@ import * as _ from "lodash";
  */
 class AuthenticationPassword {
   public password: string;
-  public hashedPassword: string;
+  public hashedPassword: string | null;
 
-  constructor(password, hashedPassword) {
+  constructor(password: string, hashedPassword: string | null) {
     this.password = password;
     this.hashedPassword = hashedPassword;
   }
 
-  public hashPassword() {
+  public hashPassword(): string {
     return this.password && bcrypt.hashSync(this.password.trim(), 12);
   }
 
-  public compareHashedPassword() {
+  public compareHashedPassword(): Promise<void> {
     return new Promise<void>((res, rej) => {
+      if (!this.hashedPassword)
+        return rej(
+          new Error("The has been an unexpected error, please try again later")
+        );
+
       bcrypt.compare(
         this.password,
         this.hashedPassword,

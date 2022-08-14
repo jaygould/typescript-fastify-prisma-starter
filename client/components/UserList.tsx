@@ -1,11 +1,17 @@
-import React, { FC } from "react";
+import React from "react";
 
 type Props<T> = {
   users: T[];
   render: (user: T) => React.ReactNode;
 };
 
-const UserList: FC<any> = <T,>({ users, render }: Props<T>) => {
+// Constrain the re-usable component to only accept a generic which has a string key, and
+// string | boolean | number values/
+
+const UserList = <T extends Record<string, string | boolean | number>>({
+  users,
+  render,
+}: Props<T>) => {
   return (
     <div>
       {users?.length ? (

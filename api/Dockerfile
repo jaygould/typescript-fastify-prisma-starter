@@ -5,9 +5,8 @@ RUN apk add vim nano
 
 WORKDIR /home/app/api
 
-COPY prisma ./prisma/
 COPY package*.json ./
 
 RUN npm install
 
-COPY . .
+COPY . ./

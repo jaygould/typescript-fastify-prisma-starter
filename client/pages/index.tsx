@@ -7,14 +7,11 @@ import GlobalMessage from "../components/GlobalMessage";
 import { useRouter } from "next/router";
 import { useCookies } from "react-cookie";
 
+import { IMessage, TPostResponse, TGetResponse } from "../types/index";
+
 interface ILoginFields {
   emailAddress: string;
   password: string;
-}
-
-interface ILoginResponse {
-  message: string;
-  jwt: string;
 }
 
 const HomePage: FC = () => {
@@ -25,7 +22,7 @@ const HomePage: FC = () => {
   } = useForm<ILoginFields>({
     defaultValues: { emailAddress: "", password: "" },
   });
-  const [message, setMessage] = useState(null);
+  const [message, setMessage] = useState<IMessage | null>(null);
   const router = useRouter();
   const [cookies, setCookie] = useCookies(["jwt"]);
 
@@ -34,10 +31,13 @@ const HomePage: FC = () => {
     password,
   }) => {
     axios
-      .post<ILoginResponse>(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
-        email: emailAddress,
-        password,
-      })
+      .post<TPostResponse<{ jwt: string }>>(
+        `${process.env.NEXT_PUBLIC_API_URL}/login`,
+        {
+          email: emailAddress,
+          password,
+        }
+      )
       .then((response) => {
         setMessage({ type: "success", text: response?.data?.message });
         setCookie("jwt", response.data.jwt, { path: "/" });
@@ -82,9 +82,10 @@ const HomePage: FC = () => {
       ></Button>
 
       <GlobalMessage
-        message={message?.text}
+        text={message?.text}
         onClose={() => setMessage(null)}
-        isOpen={message && message.type && message.text}
+        isOpen={message !== null}
+        type={message?.type}
       />
     </>
   );

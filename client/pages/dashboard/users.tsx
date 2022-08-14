@@ -3,18 +3,16 @@ import withAuthentication from "../../services/with-authentication";
 import axios from "axios";
 import UserList from "../../components/UserList";
 
-// TODO: share types from server
-interface IUser {
+type User = {
   email: string;
-}
-
-interface ICurrentUser extends IUser {
   isThisUser: boolean;
-}
+};
+
+type AllUsers = Omit<User, "isThisUser">;
 
 type Props = {
-  users: IUser[];
-  thisUser: ICurrentUser[];
+  users: AllUsers[];
+  thisUser: User[];
 };
 
 const Users: FC<Props> = ({ thisUser, users }) => {
@@ -23,9 +21,9 @@ const Users: FC<Props> = ({ thisUser, users }) => {
       <h2>Dashboard</h2>
       <div className="mb-10">
         <p>Users:</p>
-        <UserList
+        <UserList<AllUsers>
           users={users}
-          render={(user: IUser) => {
+          render={(user) => {
             return <div>{user.email}</div>;
           }}
         ></UserList>
@@ -33,9 +31,9 @@ const Users: FC<Props> = ({ thisUser, users }) => {
 
       <div className="mb-10">
         <p>Current user:</p>
-        <UserList
+        <UserList<User>
           users={thisUser}
-          render={(user: ICurrentUser) => {
+          render={(user: User) => {
             return <div>{user.email}</div>;
           }}
         ></UserList>

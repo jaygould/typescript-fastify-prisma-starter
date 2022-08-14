@@ -23,7 +23,12 @@ model LoginActivity {
   id  Int @id @default(autoincrement())
   userId  Int
   user  User  @relation(fields: [userId], references: [id])
-  activityType String?
+  activityType ActivityType?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum ActivityType {
+  login
+  signup
 }

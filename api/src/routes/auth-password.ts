@@ -1,20 +1,20 @@
+import { User } from "@prisma/client";
 import { Authentication } from "../services/Authentication";
 import { AuthenticationToken } from "../services/AuthenticationToken";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
-import { IUserLogin, IUserName, IUserTokens } from "../ts-types/user.types";
 import { getErrors } from "../ts-helpers/errors";
 
 type IRegisterRequest = FastifyRequest<{
-  Body: IUserLogin & IUserName;
+  Body: Pick<User, "email" | "password" | "firstName" | "lastName">;
 }>;
 
 type ILoginRequest = FastifyRequest<{
-  Body: IUserLogin;
+  Body: Pick<User, "email" | "password">;
 }>;
 
 type IValidateRequest = FastifyRequest<{
-  Body: IUserTokens;
+  Body: Pick<User, "refreshToken"> & { token?: string };
 }>;
 
 async function routes(fastify: FastifyInstance) {

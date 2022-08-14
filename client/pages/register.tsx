@@ -5,6 +5,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Button, { ButtonTypeEnum } from "../components/Button";
 import GlobalMessage from "../components/GlobalMessage";
 
+import { IMessage } from "../types/index";
+
 interface IRegisterFields {
   firstName: string;
   lastName: string;
@@ -20,7 +22,7 @@ const RegisterPage: FC = () => {
   } = useForm<IRegisterFields>({
     defaultValues: { emailAddress: "", password: "" },
   });
-  const [message, setMessage] = useState(null);
+  const [message, setMessage] = useState<IMessage | null>(null);
 
   const onSubmit: SubmitHandler<IRegisterFields> = ({
     firstName,
@@ -96,9 +98,10 @@ const RegisterPage: FC = () => {
       <Button text={"Login"} link={"/"} color={"bg-green-700"}></Button>
 
       <GlobalMessage
-        message={message?.text}
+        text={message?.text}
         onClose={() => setMessage(null)}
-        isOpen={message && message.type && message.text}
+        isOpen={message !== null}
+        type={message?.type}
       />
     </>
   );

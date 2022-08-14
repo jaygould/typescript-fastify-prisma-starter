@@ -1,14 +1,18 @@
-import { Prisma, PrismaClient } from "@prisma/client";
-
 import {
-  IUser,
-  IUserLogin,
-  IUserName,
+  Prisma,
+  PrismaClient,
+  User,
   LoginActivity,
-} from "../ts-types/user.types";
+  ActivityType,
+} from "@prisma/client";
 
 import { AuthenticationToken } from "./AuthenticationToken";
 import { AuthenticationPassword } from "./AuthenticationPassword";
+
+interface IUserCreate
+  extends Pick<User, "firstName" | "lastName" | "email" | "password"> {}
+
+interface IUserLogin extends Pick<User, "email" | "password"> {}
 
 class Authentication {
   public db;
@@ -23,7 +27,7 @@ class Authentication {
     lastName,
     email,
     password,
-  }: IUserName & IUserLogin): Promise<IUser> {
+  }: IUserCreate): Promise<User> {
     if (!email || !firstName || !lastName || !password) {
       throw new Error("You must send all register details.");
     }
@@ -39,12 +43,12 @@ class Authentication {
     }
 
     const authPassword = new AuthenticationPassword(password, null);
-    const newUser = await this.saveUser(
+    const newUser = await this.saveUser({
       firstName,
       lastName,
       email,
-      authPassword.hashPassword()
-    );
+      password: authPassword.hashPassword(),
+    });
 
     await this.logUserActivity(newUser.id, "signup");
 
@@ -86,14 +90,17 @@ class Authentication {
     };
   }
 
-  logUserActivity(userId: number, activity: LoginActivity) {
+  logUserActivity(
+    userId: number,
+    activity: ActivityType
+  ): Promise<LoginActivity> {
     return this.db.loginActivity.create({
       data: { userId, activityType: activity },
     });
   }
 
-  doesUserExist(email: string): Promise<IUser> {
-    const userEmailWhere: Prisma.UserWhereInput = {
+  doesUserExist(email: string): Promise<User | null> {
+    const userEmailWhere: Prisma.UserWhereUniqueInput = {
       email: email,
     };
 
@@ -102,19 +109,26 @@ class Authentication {
     });
   }
 
-  validateEmail(email: string) {
+  validateEmail(email: string | number) {
     const re =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
   }
 
-  saveUser(first_name, last_name, email, passwordHash): Promise<IUser> {
+  saveUser({
+    firstName,
+    lastName,
+    email,
+    password,
+  }: IUserCreate): Promise<User> {
+    if (!email) throw new Error();
+
     return this.db.user.create({
       data: {
-        firstName: first_name,
-        lastName: last_name,
+        firstName: firstName,
+        lastName: lastName,
         email: email,
-        password: passwordHash,
+        password: password,
       },
     });
   }

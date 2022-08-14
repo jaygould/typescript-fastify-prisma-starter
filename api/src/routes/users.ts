@@ -1,7 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { User } from "../services/User";
-
-import { IUserLogin, IUserName, IUserTokens } from "../ts-types/user.types";
 import { getErrors } from "../ts-helpers/errors";
 
 type IGetUsersRequest = FastifyRequest<{}>;

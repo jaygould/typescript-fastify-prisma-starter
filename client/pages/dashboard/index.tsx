@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import Button, { ButtonTypeEnum } from "../../components/Button";
 import { useCookies } from "react-cookie";
 import { useRouter } from "next/router";
@@ -38,12 +38,19 @@ const Dashboard: FC<Props> = ({ name }) => {
   );
 };
 
-export const getServerSideProps = withAuthentication((context, props) => {
-  return {
-    props: {
-      name: props.name,
-    },
-  };
-});
+export const getServerSideProps = withAuthentication(
+  (
+    context,
+    props
+  ): {
+    props: Props;
+  } => {
+    return {
+      props: {
+        name: props.name,
+      },
+    };
+  }
+);
 
 export default Dashboard;
